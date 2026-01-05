@@ -17,7 +17,7 @@ pub enum BlockType {
     Code { language: String },
     Quote,
     Divider,
-    Page,
+    Page { page_id: Uuid },
 }
 
 // basic struct for a block :D
