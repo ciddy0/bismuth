@@ -72,3 +72,36 @@ pub fn update_page_cover(
         .map_err(|e| format!("database error D: {}", e))?
         .ok_or_else(|| format!("page not found D: {}", page_id))
 }
+
+#[tauri::command]
+pub fn get_child_pages(parent_id: String, db: State<Database>) -> Result<Vec<Page>, String> {
+    db.get_child_pages(&parent_id)
+        .map_err(|e| format!("failed to get child pages D: {}", e))
+}
+
+#[tauri::command]
+pub fn get_root_pages(db: State<Database>) -> Result<Vec<Page>, String> {
+    db.get_root_pages()
+        .map_err(|e| format!("failed to get root pages D: {}", e))
+}
+
+#[tauri::command]
+pub fn create_nested_page(
+    title: String,
+    parent_id: String,
+    db: State<Database>,
+) -> Result<Page, String> {
+    let page = Page::new(title).with_parent(parent_id);
+
+    db.insert_page(&page)
+        .map_err(|e| format!("failed to create nested page D: {}", e))?;
+
+    Ok(page)
+}
+
+#[tauri::command]
+pub fn validate_page_link(page_id: String, db: State<Database>) -> Result<bool, String> {
+    db.get_page(&page_id)
+        .map(|page| page.is_some())
+        .map_err(|e| format!("failed to validate page link D: {}", e))
+}

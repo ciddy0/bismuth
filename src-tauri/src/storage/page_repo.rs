@@ -104,4 +104,32 @@ impl Database {
         )?;
         Ok(())
     }
+
+    pub fn get_child_pages(&self, parent_id: &str) -> Result<Vec<Page>> {
+        let conn = self.get_connection();
+        let mut stmt = conn.prepare(
+            "SELECT id, title, icon, cover, parent_id, is_archived, created_at, updated_at 
+             FROM pages WHERE parent_id = ?1 AND is_archived = 0 ORDER BY created_at ASC",
+        )?;
+
+        let pages = stmt
+            .query_map(params![parent_id], |row| self.row_to_page(row))?
+            .collect::<Result<Vec<_>>>()?;
+
+        Ok(pages)
+    }
+
+    pub fn get_root_pages(&self) -> Result<Vec<Page>> {
+        let conn = self.get_connection();
+        let mut stmt = conn.prepare(
+            "SELECT id, title, icon, cover, parent_id, is_archived, created_at, updated_at 
+             FROM pages WHERE parent_id IS NULL AND is_archived = 0 ORDER BY created_at ASC",
+        )?;
+
+        let pages = stmt
+            .query_map([], |row| self.row_to_page(row))?
+            .collect::<Result<Vec<_>>>()?;
+
+        Ok(pages)
+    }
 }

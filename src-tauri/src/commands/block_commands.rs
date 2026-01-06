@@ -58,18 +58,24 @@ pub fn update_block_content(
     db.update_block_content(&block_id, &content)
         .map_err(|e| format!("failed to update block D: {}", e))?;
 
-    let block = db
-        .get_page_blocks("")
+    db.get_block_by_id(&block_id)
         .map_err(|e| format!("database error D: {}", e))?
-        .into_iter()
-        .find(|b| b.id.to_string() == block_id)
-        .ok_or_else(|| format!("block not found D: {}", block_id))?;
-
-    Ok(block)
+        .ok_or_else(|| format!("block not found D: {}", block_id))
 }
 
 #[tauri::command]
 pub fn delete_block(block_id: String, db: State<Database>) -> Result<(), String> {
+    let block = db
+        .get_block_by_id(&block_id)
+        .map_err(|e| format!("database error D: {}", e))?
+        .ok_or_else(|| format!("block not found D: {}", block_id))?;
+
+    // check if the block is a sub page
+    if let BlockType::SubPage { page_id } = block.block_type {
+        db.delete_page(&page_id.to_string())
+            .map_err(|e| format!("failed to delete associated page D: {}", e))?;
+    }
+
     db.delete_block(&block_id)
         .map_err(|e| format!("failed to delete block D: {}", e))
 }
@@ -83,12 +89,7 @@ pub fn reorder_block(
     db.update_block_order(&block_id, new_order)
         .map_err(|e| format!("failed to reorder block D: {}", e))?;
 
-    let block = db
-        .get_page_blocks("")
+    db.get_block_by_id(&block_id)
         .map_err(|e| format!("database error D: {}", e))?
-        .into_iter()
-        .find(|b| b.id.to_string() == block_id)
-        .ok_or_else(|| format!("block not found D: {}", block_id))?;
-
-    Ok(block)
+        .ok_or_else(|| format!("block not found D: {}", block_id))
 }

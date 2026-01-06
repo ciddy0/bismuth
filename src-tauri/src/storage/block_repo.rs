@@ -1,6 +1,6 @@
 use super::db::Database;
 use crate::models::{Block, BlockType};
-use rusqlite::{params, Result, Row};
+use rusqlite::{params, OptionalExtension, Result, Row};
 use uuid::Uuid;
 
 impl Database {
@@ -23,6 +23,20 @@ impl Database {
             ],
         )?;
         Ok(())
+    }
+
+    pub fn get_block_by_id(&self, id: &str) -> Result<Option<Block>> {
+        let conn = self.get_connection();
+        let mut stmt = conn.prepare(
+            "SELECT id, page_id, block_type, content, parent_id, order_position, created_at, updated_at 
+             FROM blocks WHERE id = ?1"
+        )?;
+
+        let block = stmt
+            .query_row(params![id], |row| self.row_to_block(row))
+            .optional()?;
+
+        Ok(block)
     }
 
     pub fn get_page_blocks(&self, page_id: &str) -> Result<Vec<Block>> {
