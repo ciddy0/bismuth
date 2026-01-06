@@ -76,7 +76,7 @@ function App() {
       );
       setPages(pagesWithChildren);
     } catch (error) {
-      console.error("Failed to load pages:", error);
+      console.error("failed to load pages D:", error);
     }
   }
 
@@ -92,7 +92,7 @@ function App() {
         }))
       );
     } catch (error) {
-      console.error("Failed to load child pages:", error);
+      console.error("failed to load child pages D:", error);
       return [];
     }
   }
@@ -103,7 +103,7 @@ function App() {
       setBlocks(pageBlocks);
       console.log(pageBlocks);
     } catch (error) {
-      console.error("Failed to load blocks:", error);
+      console.error("failed to load blocks D:", error);
     }
   }
 
@@ -116,7 +116,7 @@ function App() {
       setCurrentPage(page);
       await loadPages();
     } catch (error) {
-      console.error("Failed to create page:", error);
+      console.error("failed to create page D:", error);
     }
   }
 
@@ -151,7 +151,7 @@ function App() {
         await loadBlocks(parentId);
       }
     } catch (error) {
-      console.error("Failed to create nested page:", error);
+      console.error("failed to create nested page D:", error);
     }
   }
 
@@ -284,7 +284,7 @@ function App() {
       setBlocks([...blocks, block]);
       setNewBlockContent("");
     } catch (error) {
-      console.error("Failed to create block:", error);
+      console.error("failed to create block D:", error);
     }
   }
 
@@ -295,7 +295,7 @@ function App() {
       
       await loadPages();
     } catch (error) {
-      console.error("Failed to delete block:", error);
+      console.error("failed to delete block D:", error);
     }
   }
 
