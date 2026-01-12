@@ -175,16 +175,18 @@ function App() {
     return (
       <div key={page.id}>
         <div
+          className="page-list-item"
           style={{
-            paddingLeft: `${depth * 16 + 8}px`,
-            padding: "8px",
+            marginLeft: `${depth * 16}px`,
+            padding: "4px 8px",
             cursor: "pointer",
-            background: currentPage?.id === page.id ? "#aeacacff" : "transparent",
+            background: currentPage?.id === page.id ? "#434343" : "",
             borderRadius: "4px",
             marginBottom: "4px",
             display: "flex",
             alignItems: "center",
-            gap: "4px"
+            gap: "4px",
+            transition: "background 0.2s"
           }}
         >
           <span
@@ -206,7 +208,7 @@ function App() {
               e.stopPropagation();
               setAddingChildTo(page.id);
             }}
-            style={{ fontSize: "12px", padding: "2px 6px" }}
+            style={{ fontSize: "12px", padding: "4px 8px" }}
           >
             +
           </button>
@@ -256,7 +258,6 @@ function App() {
               <div
                 style={{
                   paddingLeft: `${(depth + 1) * 16 + 24}px`,
-                  padding: "8px",
                   color: "#999",
                   fontSize: "14px",
                   fontStyle: "italic"
@@ -319,16 +320,16 @@ function App() {
         const subPageId = (block.block_type as any).data.page_id;
         return (
           <div 
+            className="subpage-link"
             style={{ 
               padding: "12px", 
-              background: "#f5f5f5", 
-              color: "#000",
+              background: "#F09BDC20", 
+              color: "#ffffff",
               borderRadius: "6px",
               cursor: "pointer",
-              border: "1px solid #e0e0e0",
               display: "flex",
               alignItems: "center",
-              gap: "8px"
+              gap: "8px",
             }}
             onClick={async () => {
               try {
@@ -374,19 +375,25 @@ function App() {
   return (
     <div style={{ display: "flex", height: "100vh" }}>
       {/* Sidebar */}
-      <div style={{ width: "250px", borderRight: "1px solid #ccc", padding: "20px" }}>
+      <div className="sidebar">
         <h2>Pages</h2>
+
+        {/* searchbar [FIXME] */}
+        <input 
+          placeholder="Search pages..."
+          style={{marginBottom: "8px"}}>
+        </input>
         
-        <div style={{ marginBottom: "20px" }}>
+        <div className="create-page-wrapper">
           <input
             type="text"
             value={newPageTitle}
             onChange={(e) => setNewPageTitle(e.target.value)}
             placeholder="New page title..."
-            style={{ width: "100%", marginBottom: "8px", padding: "4px" }}
+            style={{ width: "100%" }}
           />
-          <button onClick={createPage} style={{ width: "100%" }}>
-            Create Page
+          <button onClick={createPage} style={{}}>
+            +
           </button>
         </div>
 
@@ -399,15 +406,18 @@ function App() {
       <div style={{ flex: 1, padding: "40px" }}>
         {currentPage ? (
           <>
-            <h1>{currentPage.title}</h1>
+            <h1 style={{textAlign: "left"}}>{currentPage.title}</h1>
             
-            <div style={{ marginBottom: "20px" }}>
+            <div style={{
+              marginBottom: "20px",
+              display: "flex",
+              gap: "8px",}}>
               <input
                 type="text"
                 value={newBlockContent}
                 onChange={(e) => setNewBlockContent(e.target.value)}
                 placeholder="Type something..."
-                style={{ width: "100%", marginBottom: "8px", padding: "8px" }}
+                style={{ width: "100%", padding: "8px" }}
               />
               <button onClick={createBlock}>Add Block</button>
             </div>
@@ -430,7 +440,7 @@ function App() {
                   </div>
                   <button
                     onClick={() => deleteBlock(block.id)}
-                    style={{ marginLeft: "8px", color: "red" }}
+                    style={{ marginLeft: "8px", color: "#DD4CAB" }}
                   >
                     ✕
                   </button>

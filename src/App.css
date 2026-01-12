@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
 .logo.vite:hover {
   filter: drop-shadow(0 0 2em #747bff);
 }
@@ -6,10 +8,11 @@
   filter: drop-shadow(0 0 2em #61dafb);
 }
 :root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'DM Sans', Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 24px;
   font-weight: 400;
+
 
   color: #0f0f0f;
   background-color: #f6f6f6;
@@ -21,6 +24,10 @@
   -webkit-text-size-adjust: 100%;
 }
 
+body {
+  margin: 0;
+}
+
 .container {
   margin: 0;
   padding-top: 10vh;
@@ -28,6 +35,30 @@
   flex-direction: column;
   justify-content: center;
   text-align: center;
+}
+
+.sidebar {
+  width: 20rem;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  border-right: 1px solid #444444; 
+  padding: 1rem;
+}
+
+.create-page-wrapper {
+  display: flex;
+  gap: 2%;
+  margin-bottom: 8px;
+}
+
+.page-list-item:hover {
+  background: #2C2C2C;
+}
+
+.subpage-link:hover {
+  text-decoration: underline;
 }
 
 .logo {
@@ -48,12 +79,12 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #F09BDC;
   text-decoration: inherit;
 }
 
 a:hover {
-  color: #535bf2;
+  color: #F09BDC;
 }
 
 h1 {
@@ -71,7 +102,7 @@ button {
   color: #0f0f0f;
   background-color: #ffffff;
   transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+  outline: none;
 }
 
 button {
@@ -79,16 +110,11 @@ button {
 }
 
 button:hover {
-  border-color: #396cd8;
+  border-color: #F09BDC;
 }
 button:active {
-  border-color: #396cd8;
+  border-color: #F09BDC;
   background-color: #e8e8e8;
-}
-
-input,
-button {
-  outline: none;
 }
 
 #greet-input {
@@ -97,20 +123,21 @@ button {
 
 @media (prefers-color-scheme: dark) {
   :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
+    color: #F5F5F5;
+    background-color: #1E1E1E;
   }
 
   a:hover {
-    color: #24c8db;
+    color: #F09BDC;
   }
 
   input,
   button {
     color: #ffffff;
-    background-color: #0f0f0f98;
+    background-color: #2C2C2C;
   }
   button:active {
-    background-color: #0f0f0f69;
+    background-color: #0f0f0f;
   }
 }
+
