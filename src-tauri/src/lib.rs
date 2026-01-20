@@ -19,6 +19,7 @@ pub fn run() {
     tauri::Builder::default()
         .manage(db)
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
             greet,
             create_page,
@@ -37,6 +38,7 @@ pub fn run() {
             update_block_content,
             delete_block,
             reorder_block,
+            upload_page_asset,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application D:");

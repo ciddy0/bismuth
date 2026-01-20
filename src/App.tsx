@@ -4,6 +4,7 @@ import "./App.css";
 import type { Page } from "./types/Page";
 import type { Block } from "./types/Block";
 import type { BlockType } from "./types/BlockType";
+import { open } from '@tauri-apps/plugin-dialog';
 
 interface PageWithChildren extends Page {
   children?: PageWithChildren[];
@@ -134,6 +135,27 @@ function App() {
       return next;
     });
   }
+  async function handleImageUpload(pageId: String, type:String) {
+  // Open the native file picker
+  const selected = await open({
+    multiple: false,
+    filters: [{ name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'webp'] }]
+  });
+
+  if (selected) {
+    try {
+      const fileName = await invoke('upload_page_asset', {
+        pageId: pageId,
+        sourcePath: selected,
+        assetType: type 
+      });
+      
+      console.log("Uploaded successfully:", fileName);
+    } catch (err) {
+      console.error("Upload failed:", err);
+    }
+  }
+}
 
   function renderPageTree(page: PageWithChildren, depth: number = 0) {
     const hasChildren = page.children && page.children.length > 0;
@@ -384,7 +406,13 @@ function App() {
         {currentPage ? (
           <>
             <h1 style={{textAlign: "left"}}>{currentPage.title}</h1>
-            
+            <button 
+          onClick={() => handleImageUpload(currentPage.id, "cover")} 
+          title="Upload Cover"
+          style={{ background: "#333", fontSize: "14px" }}
+        >
+          🖼️
+        </button>
             <div style={{
               marginBottom: "20px",
               display: "flex",
