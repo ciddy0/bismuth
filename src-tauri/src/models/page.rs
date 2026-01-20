@@ -1,7 +1,9 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
+#[ts(export, export_to = "../../src/types/")]
 pub struct Page {
     pub id: String,
     pub title: String,
@@ -9,7 +11,9 @@ pub struct Page {
     pub cover: Option<String>,
     pub parent_id: Option<String>, // what folder am i nested under
     pub is_archived: bool,
+    #[ts(type = "string")]
     pub created_at: DateTime<Utc>,
+    #[ts(type = "string")]
     pub updated_at: DateTime<Utc>,
 }
 
@@ -36,5 +40,15 @@ impl Page {
     pub fn with_icon(mut self, icon: String) -> Self {
         self.icon = Some(icon);
         self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn export_bindings() {
+        Page::export().unwrap();
     }
 }

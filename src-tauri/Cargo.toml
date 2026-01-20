@@ -25,3 +25,4 @@ serde_json = "1"
 uuid = { version = "1.6", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
 rusqlite = { version = "0.31", features = ["bundled"] }
+ts-rs = "10.0"

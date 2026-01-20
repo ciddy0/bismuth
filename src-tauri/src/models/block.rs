@@ -1,10 +1,12 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 use uuid::Uuid;
 
 // cotent inside pages in notion just consist of blocks
 // some basic ones we can have for now
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, TS)]
+#[ts(export, export_to = "../../src/types/")]
 #[serde(tag = "type", content = "data")]
 pub enum BlockType {
     Text,
@@ -13,24 +15,39 @@ pub enum BlockType {
     Heading3,
     BulletList,
     NumberedList,
-    Todo { checked: bool },
-    Code { language: String },
+    Todo {
+        checked: bool,
+    },
+    Code {
+        language: String,
+    },
     Quote,
     Divider,
-    SubPage { page_id: Uuid },
-    PageLink { page_id: Uuid },
+    SubPage {
+        #[ts(type = "string")]
+        page_id: Uuid,
+    },
+    PageLink {
+        #[ts(type = "string")]
+        page_id: Uuid,
+    },
 }
-
 // basic struct for a block :D
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, TS)]
+#[ts(export, export_to = "../../src/types/")]
 pub struct Block {
+    #[ts(type = "string")]
     pub id: Uuid,
-    pub page_id: Uuid, // help know what document the block is in
+    #[ts(type = "string")]
+    pub page_id: Uuid,
     pub block_type: BlockType,
-    pub content: String,         // the actual content
-    pub parent_id: Option<Uuid>, // which blocks contain it
-    pub order: i32,              // order is the veritcal order which the block is on the page
+    pub content: String,
+    #[ts(type = "string | null")]
+    pub parent_id: Option<Uuid>,
+    pub order: i32,
+    #[ts(type = "string")]
     pub created_at: DateTime<Utc>,
+    #[ts(type = "string")]
     pub updated_at: DateTime<Utc>,
 }
 
@@ -59,5 +76,16 @@ impl Block {
     pub fn with_order(mut self, order: i32) -> Self {
         self.order = order;
         self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn export_bindings() {
+        Block::export().unwrap();
+        BlockType::export().unwrap();
     }
 }
