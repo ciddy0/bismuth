@@ -1,47 +1,14 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
-
-interface Page {
-  id: string;
-  title: string;
-  icon: string | null;
-  cover: string | null;
-  parent_id: string | null;
-  is_archived: boolean;
-  created_at: string;
-  updated_at: string;
-}
+import type { Page } from "./types/Page";
+import type { Block } from "./types/Block";
+import type { BlockType } from "./types/BlockType";
 
 interface PageWithChildren extends Page {
   children?: PageWithChildren[];
   isExpanded?: boolean;
 }
-
-interface Block {
-  id: string;
-  page_id: string;
-  block_type: BlockType;
-  content: string;
-  parent_id: string | null;
-  order: number;
-  created_at: string;
-  updated_at: string;
-}
-
-type BlockType = 
-  | { type: "Text" }
-  | { type: "Heading1" }
-  | { type: "Heading2" }
-  | { type: "Heading3" }
-  | { type: "BulletList" }
-  | { type: "NumberedList" }
-  | { type: "Todo", data: { checked: boolean } }
-  | { type: "Code", data: { language: string } }
-  | { type: "Quote" }
-  | { type: "Divider" }
-  | { type: "SubPage", data: { page_id: string } }
-  | { type: "PageLink", data: { page_id: string } };
 
 function App() {
   const [pages, setPages] = useState<PageWithChildren[]>([]);
@@ -127,9 +94,10 @@ function App() {
       const newPage = await invoke<Page>("create_nested_page", { title, parentId });
       
       // Create a SubPage block in the parent page
+      const blockType: BlockType = { type: "SubPage", data: { page_id: newPage.id } };
       await invoke<Block>("create_block", {
         pageId: parentId,
-        blockType: { type: "SubPage", data: { page_id: newPage.id } },
+        blockType: blockType,
         content: title,
         parentId: null
       });
@@ -276,9 +244,10 @@ function App() {
     if (!currentPage || !newBlockContent.trim()) return;
 
     try {
+      const blockType: BlockType = { type: "Text" };
       const block = await invoke<Block>("create_block", {
         pageId: currentPage.id,
-        blockType: { type: "Text" },
+        blockType: blockType,
         content: newBlockContent,
         parentId: null
       });
@@ -316,57 +285,65 @@ function App() {
         return <blockquote>{block.content}</blockquote>;
       case "Code":
         return <pre><code>{block.content}</code></pre>;
-      case "SubPage":
-        const subPageId = (block.block_type as any).data.page_id;
-        return (
-          <div 
-            className="subpage-link"
-            style={{ 
-              padding: "12px", 
-              background: "#F09BDC20", 
-              color: "#ffffff",
-              borderRadius: "6px",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-            onClick={async () => {
-              try {
-                const page = await invoke<Page>("get_page", { pageId: subPageId });
-                setCurrentPage(page);
-              } catch (error) {
-                console.error("Failed to load page:", error);
-              }
-            }}
-          >
-            📄 {block.content}
-          </div>
-        );
-      case "PageLink":
-        const pageLinkId = (block.block_type as any).data.page_id;
-        return (
-          <div 
-            style={{ 
-              padding: "8px", 
-              background: "#e8f4ff", 
-              borderRadius: "4px",
-              cursor: "pointer",
-              border: "1px solid #b3d9ff",
-              display: "inline-block"
-            }}
-            onClick={async () => {
-              try {
-                const page = await invoke<Page>("get_page", { pageId: pageLinkId });
-                setCurrentPage(page);
-              } catch (error) {
-                console.error("Failed to load page:", error);
-              }
-            }}
-          >
-            🔗 {block.content}
-          </div>
-        );
+      case "SubPage": {
+        if (block.block_type.type === "SubPage") {
+          const subPageId = block.block_type.data.page_id;
+          return (
+            <div 
+              className="subpage-link"
+              style={{ 
+                padding: "12px", 
+                background: "#F09BDC20", 
+                color: "#ffffff",
+                borderRadius: "6px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+              }}
+              onClick={async () => {
+                try {
+                  const page = await invoke<Page>("get_page", { pageId: subPageId });
+                  setCurrentPage(page);
+                } catch (error) {
+                  console.error("Failed to load page:", error);
+                }
+              }}
+            >
+              📄 {block.content}
+            </div>
+          );
+        }
+        break;
+      }
+      case "PageLink": {
+        if (block.block_type.type === "PageLink") {
+          const pageLinkId = block.block_type.data.page_id;
+          return (
+            <div 
+              style={{ 
+                padding: "8px", 
+                background: "#e8f4ff", 
+                borderRadius: "4px",
+                cursor: "pointer",
+                border: "1px solid #b3d9ff",
+                display: "inline-block"
+              }}
+              onClick={async () => {
+                try {
+                  const page = await invoke<Page>("get_page", { pageId: pageLinkId });
+                  setCurrentPage(page);
+                } catch (error) {
+                  console.error("Failed to load page:", error);
+                }
+              }}
+            >
+              🔗 {block.content}
+            </div>
+          );
+        }
+        break;
+      }
       default:
         return <p>{block.content}</p>;
     }
