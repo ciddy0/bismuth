@@ -2,7 +2,6 @@ use crate::storage::Database;
 use std::fs;
 use std::path::Path;
 use tauri::{AppHandle, Manager, State};
-use uuid::Uuid;
 
 #[tauri::command]
 pub async fn upload_page_asset(
@@ -17,32 +16,48 @@ pub async fn upload_page_asset(
 
     fs::create_dir_all(&asset_path).map_err(|e| e.to_string())?;
 
-    let path = Path::new(&source_path);
-    let extension = path.extension().and_then(|s| s.to_str()).unwrap_or("png");
-    let file_name = format!("{}.{}", Uuid::new_v4(), extension);
-    let dest_path = asset_path.join(&file_name);
+    // get the original filename from the source path
+    let source_file = Path::new(&source_path);
+    let original_filename = source_file
+        .file_name()
+        .and_then(|f| f.to_str())
+        .ok_or("Invalid filename")?;
 
+    let dest_path = asset_path.join(original_filename);
+
+    // delete old asset if it exists
     if let Ok(Some(page)) = db.get_page(&page_id) {
         let old_file = if asset_type == "icon" {
             page.icon
         } else {
             page.cover
         };
-        if let Some(old_name) = old_file {
-            let old_path = asset_path.join(old_name);
-            let _ = fs::remove_file(old_path);
+
+        if let Some(old_filename) = old_file {
+            // only delete if it's different from the new file
+            if old_filename != original_filename {
+                let old_path = asset_path.join(old_filename);
+                if old_path.exists() {
+                    fs::remove_file(&old_path)
+                        .map_err(|e| format!("Failed to delete old file: {}", e))?;
+                    eprintln!("Deleted old asset: {:?}", old_path);
+                }
+            }
         }
     }
 
+    // copy the new file
     fs::copy(&source_path, &dest_path).map_err(|e| format!("Failed to copy file: {}", e))?;
+    eprintln!("Copied asset to: {:?}", dest_path);
 
+    // update database
     if asset_type == "icon" {
-        db.update_page_icon(&page_id, &file_name)
+        db.update_page_icon(&page_id, original_filename)
             .map_err(|e| format!("DB Error: {}", e))?;
     } else {
-        db.update_page_cover(&page_id, &file_name)
+        db.update_page_cover(&page_id, original_filename)
             .map_err(|e| format!("DB Error: {}", e))?;
     }
-    println!("Assets are being stored at: {:?}", asset_path);
-    Ok(file_name)
+
+    Ok(original_filename.to_string())
 }
