@@ -1,3 +1,4 @@
+mod asset_protocol;
 mod commands;
 mod models;
 mod storage;
@@ -16,7 +17,13 @@ pub fn run() {
     // initialize database
     let db = Database::new("bismuth.db").expect("failed to initialize database D:");
 
-    tauri::Builder::default()
+    let builder = tauri::Builder::default();
+
+    // register the asset protocol on the builder (die yeah die)
+    let builder = asset_protocol::register_asset_protocol(builder);
+
+    builder
+        .setup(|_app| Ok(()))
         .manage(db)
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())

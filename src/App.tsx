@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke, convertFileSrc } from "@tauri-apps/api/core";
 import "./App.css";
 import type { Page } from "./types/Page";
 import type { Block } from "./types/Block";
@@ -156,6 +156,12 @@ function App() {
       console.error("Upload failed:", err);
     }
   }
+}
+function getAssetUrl(filename: string | null | undefined): string | null {
+  if (!filename) return null;
+  
+  const assetPath = `page_assets/${filename}`;
+  return convertFileSrc(assetPath);
 }
 
   function renderPageTree(page: PageWithChildren, depth: number = 0) {
@@ -415,7 +421,7 @@ function App() {
                 width: "100%",
                 padding: "16px",
                 backgroundColor: "#222",
-                backgroundImage: currentPage.cover ? `url(${currentPage.cover})` : "none",
+                backgroundImage: currentPage.cover ? `url(${getAssetUrl(currentPage.cover)})` : "none",
               }}
               // TEMP: for debugging cover display
               title={`${currentPage.cover}`}>
