@@ -28,6 +28,22 @@ body {
   margin: 0;
 }
 
+/* .page-cover {
+  height: 200px;
+  width: 100%;
+  padding: 16px;
+  background-color: #222;
+} */
+
+.upload-cover-button {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.page-cover:hover .upload-cover-button {
+  opacity: 1;
+}
+
 .container {
   margin: 0;
   padding-top: 10vh;
@@ -140,4 +156,3 @@ button:active {
     background-color: #0f0f0f;
   }
 }
-

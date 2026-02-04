@@ -144,12 +144,13 @@ function App() {
 
   if (selected) {
     try {
+      console.log('selected img', selected);
       const fileName = await invoke('upload_page_asset', {
         pageId: pageId,
         sourcePath: selected,
         assetType: type 
       });
-      
+
       console.log("Uploaded successfully:", fileName);
     } catch (err) {
       console.error("Upload failed:", err);
@@ -401,18 +402,34 @@ function App() {
         </div>
       </div>
 
+      
+
       {/* Main Content */}
-      <div style={{ flex: 1, padding: "40px" }}>
+      <div style={{width: "100%"}}>
         {currentPage ? (
+          
           <>
+            {/* header */}
+            <div className="page-cover" style={{
+                height: "200px",
+                width: "100%",
+                padding: "16px",
+                backgroundColor: "#222",
+                backgroundImage: currentPage.cover ? `url(${currentPage.cover})` : "none",
+              }}
+              // TEMP: for debugging cover display
+              title={`${currentPage.cover}`}>
+              <button 
+                onClick={() => handleImageUpload(currentPage.id, "cover")} 
+                title="Upload Cover"
+                className="upload-cover-button"
+              >
+                🖼️
+              </button>
+            </div>
+            {/* content */}
+            <div style={{ flex: 1, padding: "16px 40px" }}>
             <h1 style={{textAlign: "left"}}>{currentPage.title}</h1>
-            <button 
-          onClick={() => handleImageUpload(currentPage.id, "cover")} 
-          title="Upload Cover"
-          style={{ background: "#333", fontSize: "14px" }}
-        >
-          🖼️
-        </button>
             <div style={{
               marginBottom: "20px",
               display: "flex",
@@ -452,6 +469,7 @@ function App() {
                 </div>
               ))}
             </div>
+            </div>
           </>
         ) : (
           <div style={{ textAlign: "center", marginTop: "100px", color: "#999" }}>
@@ -459,6 +477,7 @@ function App() {
           </div>
         )}
       </div>
+      
     </div>
   );
 }
