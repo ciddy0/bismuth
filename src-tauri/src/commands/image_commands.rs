@@ -34,13 +34,25 @@ pub async fn upload_page_asset(
         };
 
         if let Some(old_filename) = old_file {
-            // only delete if it's different from the new file
             if old_filename != original_filename {
-                let old_path = asset_path.join(old_filename);
-                if old_path.exists() {
-                    fs::remove_file(&old_path)
-                        .map_err(|e| format!("Failed to delete old file: {}", e))?;
-                    eprintln!("Deleted old asset: {:?}", old_path);
+                // check if the file was used elsewhere as a cover image
+                let is_used_elsewhere = db
+                    .is_asset_used_by_other_pages(&old_filename, &page_id, &asset_type)
+                    .map_err(|e| format!("Failed to check asset usage: {}", e))?;
+
+                // if its not then we can remove the file
+                if !is_used_elsewhere {
+                    let old_path = asset_path.join(old_filename);
+                    if old_path.exists() {
+                        fs::remove_file(&old_path)
+                            .map_err(|e| format!("Failed to delete old file: {}", e))?;
+                        eprintln!("Deleted old asset: {:?}", old_path);
+                    }
+                } else {
+                    eprintln!(
+                        "Skipped deletion - asset in use by other pages: {}",
+                        old_filename
+                    );
                 }
             }
         }

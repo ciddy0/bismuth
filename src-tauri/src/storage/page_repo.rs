@@ -132,4 +132,29 @@ impl Database {
 
         Ok(pages)
     }
+
+    pub fn is_asset_used_by_other_pages(
+        &self,
+        filename: &str,
+        current_page_id: &str,
+        asset_type: &str,
+    ) -> Result<bool, Box<dyn std::error::Error>> {
+        let conn = self.get_connection();
+
+        let column = if asset_type == "icon" {
+            "icon"
+        } else {
+            "cover"
+        };
+
+        let query = format!(
+            "SELECT COUNT(*) FROM pages WHERE {} = ?1 AND id != ?2",
+            column
+        );
+
+        let count: i64 =
+            conn.query_row(&query, params![filename, current_page_id], |row| row.get(0))?;
+
+        Ok(count > 0)
+    }
 }
