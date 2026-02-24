@@ -9,6 +9,7 @@ import { useBlocks } from "./hooks/useBlocks";
 import { useCurrentPage } from "./hooks/useCurrentPage";
 import { pageService } from "./services/pageService";
 import { blockService } from "./services/blockService";
+import type { Block } from "./types/Block";
 import type { BlockType } from "./types/BlockType";
 
 function App() {
@@ -21,7 +22,7 @@ function App() {
     setExpandedPages,
   } = usePages();
 
-  const { blocks, loadBlocks, createBlock, deleteBlock } = useBlocks();
+  const { blocks, loadBlocks, createBlock, deleteBlock, updateBlock, reorderBlocks } = useBlocks();
 
   const { currentPage, setCurrentPage } = useCurrentPage((page) => {
     if (page) {
@@ -84,6 +85,14 @@ function App() {
     await loadPages(); // Refresh pages in case a SubPage block was deleted
   };
 
+  const handleUpdateBlock = async (blockId: string, content: string) => {
+    await updateBlock(blockId, content);
+  };
+
+  const handleReorderBlocks = async (reorderedBlocks: Block[]) => {
+    await reorderBlocks(reorderedBlocks);
+  };
+
   return (
     <div style={{ display: "flex", height: "100vh" }}>
       <Sidebar
@@ -105,6 +114,8 @@ function App() {
               blocks={blocks}
               onCreateBlock={handleCreateBlock}
               onDeleteBlock={handleDeleteBlock}
+              onUpdateBlock={handleUpdateBlock}
+              onReorderBlocks={handleReorderBlocks}
               onNavigate={setCurrentPage}
             />
           </>

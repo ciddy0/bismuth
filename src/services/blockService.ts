@@ -24,4 +24,12 @@ export const blockService = {
   async deleteBlock(blockId: string): Promise<void> {
     return await invoke("delete_block", { blockId });
   },
+
+  async updateBlockContent(blockId: string, content: string): Promise<Block> {
+    return await invoke<Block>("update_block_content", { blockId, content });
+  },
+
+  async reorderBlock(blockId: string, newOrder: number): Promise<Block> {
+    return await invoke<Block>("reorder_block", { blockId, newOrder });
+  },
 };

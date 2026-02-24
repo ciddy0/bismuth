@@ -8,7 +8,7 @@ import type { BlockType } from "../types/BlockType";
  * - load all blocks for a page
  * - create new blocks
  * - delete existing blocks
- * 
+ *
  * TODO: add updateBlock to edit existing block content
  * TODO: add moveBlock / reorderBlock for drag-and-drop support)
  * TODO: cache blocks per page to avoid refetching on navigation
@@ -60,10 +60,42 @@ export function useBlocks() {
     }
   }, []);
 
+  const updateBlock = useCallback(async (blockId: string, content: string) => {
+    try {
+      const updated = await blockService.updateBlockContent(blockId, content);
+      setBlocks((prev) => prev.map((b) => (b.id === blockId ? updated : b)));
+    } catch (error) {
+      console.error("Failed to update block:", error);
+    }
+  }, []);
+
+  const reorderBlocks = useCallback(async (reorderedBlocks: Block[]) => {
+    const previous = blocks;
+    setBlocks(reorderedBlocks);
+
+    const changed = reorderedBlocks.filter((block, newIndex) => {
+      const oldIndex = previous.findIndex((b) => b.id === block.id);
+      return oldIndex !== newIndex;
+    });
+
+    try {
+      await Promise.all(
+        changed.map((block) =>
+          blockService.reorderBlock(block.id, reorderedBlocks.indexOf(block)),
+        ),
+      );
+    } catch (error) {
+      console.error("Failed to reorder blocks:", error);
+      setBlocks(previous);
+    }
+  }, [blocks]);
+
   return {
     blocks,
     loadBlocks,
     createBlock,
     deleteBlock,
+    updateBlock,
+    reorderBlocks,
   };
 }

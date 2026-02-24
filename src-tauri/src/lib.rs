@@ -23,7 +23,18 @@ pub fn run() {
     let builder = asset_protocol::register_asset_protocol(builder);
 
     builder
-        .setup(|_app| Ok(()))
+        .setup(|app| {
+            tauri::WebviewWindowBuilder::new(
+                app,
+                "main",
+                tauri::WebviewUrl::App(std::path::PathBuf::from("/")),
+            )
+            .title("bismuth")
+            .inner_size(800.0, 600.0)
+            .disable_drag_drop_handler()
+            .build()?;
+            Ok(())
+        })
         .manage(db)
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
