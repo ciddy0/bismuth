@@ -209,7 +209,8 @@ export function PageContent({
                   pointerEvents: draggedId && draggedId !== block.id ? "none" : "auto",
                 }}
               >
-                ⠿
+                {/* TO-D0: replace me D: should be simialr to notion to where it only appears when you hover over the area*/}
+                D:
               </span>
 
               {/* block content: editing or rendered */}
