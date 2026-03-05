@@ -28,13 +28,6 @@ body {
   margin: 0;
 }
 
-/* .page-cover {
-  height: 200px;
-  width: 100%;
-  padding: 16px;
-  background-color: #222;
-} */
-
 .upload-cover-button {
   opacity: 0;
   transition: opacity 0.3s;

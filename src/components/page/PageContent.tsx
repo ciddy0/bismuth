@@ -35,6 +35,7 @@ export function PageContent({
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
   const [dragOverEnd, setDragOverEnd] = useState(false);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   // block creation
 
@@ -179,17 +180,18 @@ export function PageContent({
               onDragEnter={(e) => handleDragEnter(e, block.id)}
               onDragLeave={(e) => handleDragLeave(e, block.id)}
               onDragOver={handleDragOver}
+              onMouseEnter={() => setHoveredId(block.id)}
+              onMouseLeave={() => setHoveredId(null)}
               onDrop={(e) => handleDrop(e, block.id)}
               style={{
                 marginBottom: "4px",
-                padding: "4px 8px",
                 borderRadius: "4px",
                 display: "flex",
                 alignItems: "center",
                 gap: "6px",
                 opacity: isDragging ? 0.4 : 1,
                 borderTop: isDropTarget ? "2px solid #DD4CAB" : "2px solid transparent",
-                transition: "border-color 0.1s, opacity 0.1s",
+                transition: "all 0.1s",
                 cursor: "default",
               }}
             >
@@ -203,10 +205,13 @@ export function PageContent({
                   cursor: "grab",
                   color: "#888",
                   fontSize: "16px",
+                  padding: "2px",
                   userSelect: "none",
                   flexShrink: 0,
                   lineHeight: 1,
                   pointerEvents: draggedId && draggedId !== block.id ? "none" : "auto",
+                  display: hoveredId === block.id ? "block" : "none",
+                  transition: "all 0.1s",
                 }}
               >
                 {/* TO-D0: replace me D: should be simialr to notion to where it only appears when you hover over the area*/}
@@ -233,6 +238,7 @@ export function PageContent({
                     rows={1}
                     style={{
                       width: "100%",
+                      fieldSizing: "content",
                       resize: "none",
                       background: "transparent",
                       border: "none",
