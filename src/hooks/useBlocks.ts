@@ -33,7 +33,6 @@ export function useBlocks() {
       content: string,
       parentId: string | null = null,
     ) => {
-      if (!content.trim()) return null;
       try {
         const block = await blockService.createBlock(
           pageId,
