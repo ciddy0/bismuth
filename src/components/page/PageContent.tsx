@@ -40,11 +40,12 @@ export function PageContent({
   // block creation
 
   const handleCreateBlock = async () => {
-    if (newBlockContent.trim()) {
-      const blockType: BlockType = { type: "Text" };
-      await onCreateBlock(page.id, blockType, newBlockContent);
-      setNewBlockContent("");
-    }
+    console.log("fuck ass block");
+    // if (newBlockContent.trim()) {
+    const blockType: BlockType = { type: "Text" };
+    await onCreateBlock(page.id, blockType, newBlockContent);
+    setNewBlockContent("");
+    // }
   };
 
   // inline editing
@@ -310,9 +311,11 @@ export function PageContent({
             if (e.key === "Enter") handleCreateBlock();
           }}
           placeholder="Type something..."
-          style={{ width: "100%", padding: "8px" }}
+          style={{ background: "transparent",
+                padding: "0px",
+          }}
         />
-        <button onClick={handleCreateBlock}>Add Block</button>
+        {/* <button onClick={handleCreateBlock}>Add Block</button> */}
       </div>
     </div>
   );
