@@ -9,7 +9,7 @@ import toDownIcon from "../../assets/to-down.png";
  *
  * this component is controlled by its parent for expansion state and
  * delegates page selection and child creation via callbacks.
- * 
+ *
  * TO-DO: animate expand/collapse
  * TO-DO: persist expansion state
  * TO-DO: drag & drop reordering
@@ -60,18 +60,10 @@ export function PageTreeItem({
   return (
     <div>
       <div
-        className="page-list-item"
+        className="flex items-center gap-1 px-2 py-1 cursor-pointer rounded mb-1 transition-colors duration-200 hover:bg-[#2C2C2C]"
         style={{
           marginLeft: `${depth * 16}px`,
-          padding: "4px 8px",
-          cursor: "pointer",
           background: currentPageId === page.id ? "#434343" : "",
-          borderRadius: "4px",
-          marginBottom: "4px",
-          display: "flex",
-          alignItems: "center",
-          gap: "4px",
-          transition: "background 0.2s",
         }}
       >
         <span
@@ -79,20 +71,16 @@ export function PageTreeItem({
             e.stopPropagation();
             onToggleExpansion(page.id);
           }}
-          style={{ cursor: "pointer", width: "16px", textAlign: "center" }}
+          className="cursor-pointer w-4 text-center"
         >
           <img
             src={isExpanded ? toDownIcon : toRightIcon}
             alt={isExpanded ? "Collapse" : "Expand"}
-            style={{
-              width: "12px",
-              height: "12px",
-              opacity: 0.85,
-            }}
+            className="w-3 h-3 opacity-85"
           />
         </span>
 
-        <span onClick={() => onPageSelect(page)} style={{ flex: 1 }}>
+        <span onClick={() => onPageSelect(page)} className="flex-1">
           {page.icon} {page.title}
         </span>
 
@@ -101,7 +89,7 @@ export function PageTreeItem({
             e.stopPropagation();
             setIsAddingChild(true);
           }}
-          style={{ fontSize: "12px", padding: "4px 8px" }}
+          className="text-xs px-2 py-1"
         >
           +
         </button>
@@ -109,10 +97,8 @@ export function PageTreeItem({
 
       {isAddingChild && (
         <div
-          style={{
-            paddingLeft: `${(depth + 1) * 16 + 8}px`,
-            marginBottom: "8px",
-          }}
+          className="mb-2"
+          style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}
         >
           <input
             type="text"
@@ -121,12 +107,9 @@ export function PageTreeItem({
             placeholder="Page title..."
             autoFocus
             onKeyDown={handleKeyDown}
-            style={{ width: "150px", padding: "4px", marginRight: "4px" }}
+            className="w-[150px] px-1 py-1 mr-1"
           />
-          <button
-            onClick={handleCreateChild}
-            style={{ padding: "4px 8px", fontSize: "12px" }}
-          >
+          <button onClick={handleCreateChild} className="px-2 py-1 text-xs">
             ✓
           </button>
           <button
@@ -134,7 +117,7 @@ export function PageTreeItem({
               setIsAddingChild(false);
               setChildPageTitle("");
             }}
-            style={{ padding: "4px 8px", fontSize: "12px", marginLeft: "4px" }}
+            className="px-2 py-1 text-xs ml-1"
           >
             ✕
           </button>
@@ -158,12 +141,8 @@ export function PageTreeItem({
             ))
           ) : (
             <div
-              style={{
-                paddingLeft: `${(depth + 1) * 16 + 24}px`,
-                color: "#999",
-                fontSize: "14px",
-                fontStyle: "italic",
-              }}
+              className="text-[#999] text-sm italic"
+              style={{ paddingLeft: `${(depth + 1) * 16 + 24}px` }}
             >
               No pages inside
             </div>

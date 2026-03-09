@@ -1,151 +1,104 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import "tailwindcss";
 
-.logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
+@theme {
+  --color-accent: #F09BDC;
+  --color-surface: #2C2C2C;
+  --color-border: #444444;
 }
 
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafb);
-}
-:root {
-  font-family: 'DM Sans', Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-
-
-  color: #0f0f0f;
-  background-color: #f6f6f6;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
-
-body {
-  margin: 0;
-}
-
-.upload-cover-button {
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.page-cover:hover .upload-cover-button {
-  opacity: 1;
-}
-
-.container {
-  margin: 0;
-  padding-top: 10vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-}
-
-.sidebar {
-  width: 20rem;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-  border-right: 1px solid #444444; 
-  padding: 1rem;
-}
-
-.create-page-wrapper {
-  display: flex;
-  gap: 2%;
-  margin-bottom: 8px;
-}
-
-.page-list-item:hover {
-  background: #2C2C2C;
-}
-
-.subpage-link:hover {
-  text-decoration: underline;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
-
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
-}
-
-.row {
-  display: flex;
-  justify-content: center;
-}
-
-a {
-  font-weight: 500;
-  color: #F09BDC;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #F09BDC;
-}
-
-h1 {
-  text-align: center;
-}
-
-input,
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  outline: none;
-}
-
-button {
-  cursor: pointer;
-}
-
-button:hover {
-  border-color: #F09BDC;
-}
-button:active {
-  border-color: #F09BDC;
-  background-color: #e8e8e8;
-}
-
-#greet-input {
-  margin-right: 5px;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    color: #F5F5F5;
-    background-color: #1E1E1E;
+    font-family: 'DM Sans', Inter, Avenir, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+    color: #0f0f0f;
+    background-color: #f6f6f6;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  a {
+    font-weight: 500;
+    color: #F09BDC;
+    text-decoration: inherit;
   }
 
   a:hover {
     color: #F09BDC;
   }
 
+  h1 {
+    font-size: 2em;
+    font-weight: 700;
+    margin: 0.67em 0;
+  }
+
+  h2 {
+    font-size: 1.5em;
+    font-weight: 700;
+    margin: 0.83em 0;
+  }
+
+  h3 {
+    font-size: 1.17em;
+    font-weight: 700;
+    margin: 1em 0;
+  }
+
   input,
   button {
-    color: #ffffff;
-    background-color: #2C2C2C;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    color: #0f0f0f;
+    background-color: #ffffff;
+    transition: border-color 0.25s;
+    outline: none;
   }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:hover {
+    border-color: #F09BDC;
+  }
+
   button:active {
-    background-color: #0f0f0f;
+    border-color: #F09BDC;
+    background-color: #e8e8e8;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color: #F5F5F5;
+      background-color: #1E1E1E;
+    }
+
+    a:hover {
+      color: #F09BDC;
+    }
+
+    input,
+    button {
+      color: #ffffff;
+      background-color: #2C2C2C;
+    }
+
+    button:active {
+      background-color: #0f0f0f;
+    }
   }
 }

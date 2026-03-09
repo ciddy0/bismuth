@@ -6,7 +6,7 @@ import { searchService } from "../../services/searchService";
 import toRightIcon from "../../assets/to-right.png";
 import toDownIcon from "../../assets/to-down.png";
 import pageIcon from "../../assets/page.png";
-import "./SearchPanel.css";
+import { cn } from "../../utils/cn";
 
 interface SearchPanelProps {
   onNavigate: (pageId: string, blockId?: string) => void;
@@ -53,19 +53,19 @@ export function SearchPanel({ onNavigate, externalQuery }: SearchPanelProps) {
   const matchCount = results?.total_matches ?? 0;
 
   return (
-    <div className="search-panel">
+    <div className="flex flex-col h-full text-[#ccc] text-[13px]">
       {externalQuery === undefined && (
-        <div className="search-input-area">
-          <div className="search-input-row">
+        <div className="p-2">
+          <div className="flex items-center bg-[#2a2a2a] border border-[#444] rounded overflow-hidden">
             <input
               ref={inputRef}
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search"
-              className="search-input"
+              className="flex-1 bg-transparent border-0 text-[#eee] px-2 py-[5px] text-[13px] outline-none rounded-none p-0"
             />
-            <div className="search-toggle-group">
+            <div className="flex items-center pr-1 gap-0.5">
               <ToggleButton
                 active={caseSensitive}
                 onClick={() => setCaseSensitive(!caseSensitive)}
@@ -85,13 +85,13 @@ export function SearchPanel({ onNavigate, externalQuery }: SearchPanelProps) {
       )}
 
       {results && effectiveQuery.trim() && (
-        <div className="search-summary">
+        <div className="px-3 py-1 text-[11px] text-[#888]">
           {matchCount} result{matchCount !== 1 ? "s" : ""} in {fileCount} file
           {fileCount !== 1 ? "s" : ""}
         </div>
       )}
-      
-      <div className="search-results-list">
+
+      <div className="flex-1 overflow-y-auto">
         {results?.groups.map((group: SearchFileGroup) => (
           <FileGroup
             key={group.page_id}
@@ -104,7 +104,7 @@ export function SearchPanel({ onNavigate, externalQuery }: SearchPanelProps) {
         ))}
 
         {effectiveQuery.trim() && results && results.total_matches === 0 && (
-          <div className="search-no-results">No results found.</div>
+          <div className="p-4 text-center text-[#666] italic">No results found.</div>
         )}
       </div>
     </div>
@@ -126,19 +126,26 @@ function FileGroup({
 }) {
   return (
     <div>
-      <div className="search-file-header" onClick={onToggle}>
+      <div
+        className="flex items-center px-2 py-1 cursor-pointer gap-1 font-medium hover:bg-[#2a2a2a]"
+        onClick={onToggle}
+      >
         <img
           src={isCollapsed ? toRightIcon : toDownIcon}
           alt={isCollapsed ? "Expand" : "Collapse"}
-          className="search-file-header-icon"
+          className="w-2.5 h-2.5 opacity-70 shrink-0"
         />
         <img
           src={pageIcon}
           alt="Page"
-          className="search-file-page-icon"
+          className="w-3.5 h-3.5 opacity-85 shrink-0"
         />
-        <span className="search-file-title">{group.page_title}</span>
-        <span className="search-match-badge">{group.matches.length}</span>
+        <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-[#ddd]">
+          {group.page_title}
+        </span>
+        <span className="bg-[#444] rounded-full px-1.5 text-[11px] text-[#aaa] min-w-[18px] text-center">
+          {group.matches.length}
+        </span>
       </div>
 
       {!isCollapsed && (
@@ -146,7 +153,7 @@ function FileGroup({
           {group.matches.map((match, i) => (
             <div
               key={`${match.block_id}-${match.match_start}-${i}`}
-              className="search-match-line"
+              className="flex items-center py-0.5 px-2 pl-7 cursor-pointer text-xs leading-[18px] hover:bg-[#2a2a2a]"
               onClick={() => {
                 const blockId = match.block_id.startsWith("title-")
                   ? undefined
@@ -154,7 +161,7 @@ function FileGroup({
                 onNavigate(group.page_id, blockId);
               }}
             >
-              <div className="search-match-content">
+              <div className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-[#bbb]">
                 <HighlightedText text={match.snippet} query={query} />
               </div>
             </div>
@@ -177,7 +184,7 @@ function HighlightedText({ text, query }: { text: string; query: string }) {
   while (idx !== -1) {
     if (idx > last) parts.push(text.slice(last, idx));
     parts.push(
-      <span key={idx} className="search-highlight">
+      <span key={idx} className="bg-[#6b5300] text-[#ffd700] rounded-[2px] px-px">
         {text.slice(idx, idx + query.length)}
       </span>
     );
@@ -202,16 +209,17 @@ function ToggleButton({
   label: string;
   wholeWord?: boolean;
 }) {
-  const classes = [
-    "search-toggle-btn",
-    active ? "active" : "",
-    wholeWord ? "whole-word" : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
-
   return (
-    <button onClick={onClick} title={title} className={classes}>
+    <button
+      onClick={onClick}
+      title={title}
+      className={cn(
+        "border-0 rounded-[3px] px-[5px] py-0.5 text-xs cursor-pointer font-semibold bg-transparent text-[#888]",
+        active && "bg-[#4a4a4a] text-white",
+        wholeWord && "border-b-2 border-b-transparent",
+        wholeWord && active && "border-b-white"
+      )}
+    >
       {label}
     </button>
   );
