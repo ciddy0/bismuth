@@ -57,6 +57,7 @@ pub fn run() {
             delete_block,
             reorder_block,
             upload_page_asset,
+            search_blocks,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application D:");

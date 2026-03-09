@@ -1,0 +1,152 @@
+.search-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: #ccc;
+  font-size: 13px;
+}
+
+.search-input-area {
+  padding: 8px;
+}
+
+.search-input-row {
+  display: flex;
+  align-items: center;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #eee;
+  padding: 5px 8px;
+  font-size: 13px;
+  outline: none;
+}
+
+.search-toggle-group {
+  display: flex;
+  align-items: center;
+  padding-right: 4px;
+  gap: 2px;
+}
+
+.search-toggle-btn {
+  border: none;
+  border-radius: 3px;
+  padding: 2px 5px;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  background: transparent;
+  color: #888;
+}
+
+.search-toggle-btn.active {
+  background: #4a4a4a;
+  color: #fff;
+}
+
+.search-toggle-btn.whole-word {
+  border-bottom: 2px solid transparent;
+}
+
+.search-toggle-btn.whole-word.active {
+  border-bottom: 2px solid #fff;
+}
+
+.search-summary {
+  padding: 4px 12px 4px;
+  font-size: 11px;
+  color: #888;
+}
+
+.search-results-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.search-file-header {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  cursor: pointer;
+  gap: 4px;
+  font-weight: 500;
+}
+
+.search-file-header:hover {
+  background: #2a2a2a;
+}
+
+.search-file-header-icon {
+  width: 10px;
+  height: 10px;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.search-file-page-icon {
+  width: 14px;
+  height: 14px;
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+.search-file-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #ddd;
+}
+
+.search-match-badge {
+  background: #444;
+  border-radius: 8px;
+  padding: 0px 6px;
+  font-size: 11px;
+  color: #aaa;
+  min-width: 18px;
+  text-align: center;
+}
+
+.search-match-line {
+  display: flex;
+  align-items: center;
+  padding: 2px 8px 2px 28px;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.search-match-line:hover {
+  background: #2a2a2a;
+}
+
+.search-match-content {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #bbb;
+}
+
+.search-highlight {
+  background: #6b5300;
+  color: #ffd700;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+.search-no-results {
+  padding: 16px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}

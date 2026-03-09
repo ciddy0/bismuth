@@ -1,17 +1,10 @@
 import { useState } from "react";
 import { SearchBar } from "./SearchBar";
 import { PageTree } from "./PageTree";
+import { SearchPanel } from "./SearchPanel";
 import type { Page } from "../../types/Page";
 import { PageWithChildren } from "../../services/pageService";
 
-/**
- * main container for the page navigation sidebar.
- * 
- * TODO: filter PageTree results using searchQuery
- * TODO: show empty state when no pages exist
- * TODO: add keyboard shortcuts for new page?
- * TODO: make sidebar resizable or collapse
- */
 interface SidebarProps {
   pages: PageWithChildren[];
   currentPageId: string | null;
@@ -21,6 +14,18 @@ interface SidebarProps {
   onCreatePage: (title: string) => Promise<void>;
   onCreateChild: (parentId: string, title: string) => Promise<void>;
 }
+
+function findPageById(pages: PageWithChildren[], id: string): Page | null {
+  for (const page of pages) {
+    if (page.id === id) return page;
+    if (page.children?.length) {
+      const found = findPageById(page.children, id);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
 export function Sidebar({
   pages,
   currentPageId,
@@ -46,30 +51,51 @@ export function Sidebar({
 
       <SearchBar value={searchQuery} onChange={setSearchQuery} />
 
-      <div className="create-page-wrapper">
-        <input
-          type="text"
-          value={newPageTitle}
-          onChange={(e) => setNewPageTitle(e.target.value)}
-          placeholder="New page title..."
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleCreatePage();
+      {searchQuery === "" ? (
+        <>
+          <div className="create-page-wrapper">
+            <input
+              type="text"
+              value={newPageTitle}
+              onChange={(e) => setNewPageTitle(e.target.value)}
+              placeholder="New page title..."
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleCreatePage();
+                }
+              }}
+              style={{ width: "100%" }}
+            />
+            <button onClick={handleCreatePage}>+</button>
+          </div>
+
+          <PageTree
+            pages={pages}
+            currentPageId={currentPageId}
+            expandedPages={expandedPages}
+            onToggleExpansion={onToggleExpansion}
+            onPageSelect={onPageSelect}
+            onCreateChild={onCreateChild}
+          />
+        </>
+      ) : (
+        <SearchPanel
+          externalQuery={searchQuery}
+          onNavigate={(pageId, blockId) => {
+            const page = findPageById(pages, pageId);
+            if (page) {
+              onPageSelect(page);
+              if (blockId) {
+                setTimeout(() => {
+                  document
+                    .getElementById(`block-${blockId}`)
+                    ?.scrollIntoView({ behavior: "smooth" });
+                }, 100);
+              }
             }
           }}
-          style={{ width: "100%" }}
         />
-        <button onClick={handleCreatePage}>+</button>
-      </div>
-
-      <PageTree
-        pages={pages}
-        currentPageId={currentPageId}
-        expandedPages={expandedPages}
-        onToggleExpansion={onToggleExpansion}
-        onPageSelect={onPageSelect}
-        onCreateChild={onCreateChild}
-      />
+      )}
     </div>
   );
 }
