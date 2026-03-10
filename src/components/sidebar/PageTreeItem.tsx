@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { Page } from "../../types/Page";
 import { PageWithChildren } from "../../services/pageService";
-import toRightIcon from "../../assets/to-right.png";
-import toDownIcon from "../../assets/to-down.png";
+import toRightIcon from "/right.png";
+import toDownIcon from "/down.png";
 
 /**
  * recursive tree node component for rendering a hierarchical page sidebar.
@@ -60,7 +60,7 @@ export function PageTreeItem({
   return (
     <div>
       <div
-        className="flex items-center gap-1 px-2 py-1 cursor-pointer rounded mb-1 transition-colors duration-200 hover:bg-[#2C2C2C]"
+        className="flex items-center gap-1 px-2 py-1 cursor-pointer mb-1 transition-colors duration-200 hover:bg-[#2C2C2C]"
         style={{
           marginLeft: `${depth * 16}px`,
           background: currentPageId === page.id ? "#434343" : "",
@@ -71,12 +71,15 @@ export function PageTreeItem({
             e.stopPropagation();
             onToggleExpansion(page.id);
           }}
-          className="cursor-pointer w-4 text-center"
+          className="cursor-pointer w-4 text-center mr-0.5"
         >
           <img
-            src={isExpanded ? toDownIcon : toRightIcon}
+            src={toRightIcon}
             alt={isExpanded ? "Collapse" : "Expand"}
-            className="w-3 h-3 opacity-85"
+            className="transition-all ease-in-out"
+            style={{
+              rotate: isExpanded ? "90deg" : "0deg",
+            }}
           />
         </span>
 
@@ -89,15 +92,15 @@ export function PageTreeItem({
             e.stopPropagation();
             setIsAddingChild(true);
           }}
-          className="text-xs px-2 py-1"
+          className="text-xs px-2 py-1 bg-transparent"
         >
-          +
+            <img className="inline max-h-5" src={"/add.png"}/>
         </button>
       </div>
 
       {isAddingChild && (
         <div
-          className="mb-2"
+          className="mb-2 flex items-center justify-center"
           style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}
         >
           <input
@@ -109,17 +112,17 @@ export function PageTreeItem({
             onKeyDown={handleKeyDown}
             className="w-[150px] px-1 py-1 mr-1"
           />
-          <button onClick={handleCreateChild} className="px-2 py-1 text-xs">
-            ✓
+          <button onClick={handleCreateChild} className="bg-transparent text-xs p-2">
+            <img className="inline max-h-5" src={"/add.png"}/>
           </button>
           <button
             onClick={() => {
               setIsAddingChild(false);
               setChildPageTitle("");
             }}
-            className="px-2 py-1 text-xs ml-1"
+            className="bg-transparent text-xs p-2 ml-1"
           >
-            ✕
+            <img className="inline max-h-5" src={"/remove.png"}/>
           </button>
         </div>
       )}

@@ -3,6 +3,8 @@ import { BlockRenderer } from "../blocks/BlockRenderer";
 import type { Block } from "../../types/Block";
 import type { Page } from "../../types/Page";
 import type { BlockType } from "../../types/BlockType";
+import removeIcon from "/remove.png";
+import gripIcon from "/grip.png";
 
 const NON_EDITABLE_TYPES = new Set(["SubPage", "PageLink", "Divider"]);
 
@@ -184,7 +186,7 @@ export function PageContent({
               onMouseEnter={() => setHoveredId(block.id)}
               onMouseLeave={() => setHoveredId(null)}
               onDrop={(e) => handleDrop(e, block.id)}
-              className="mb-1 rounded flex items-center gap-1.5 transition-all duration-100 cursor-default"
+              className="mb-1 flex items-start gap-1.5 transition-all ease-in-out duration-100 cursor-default group"
               style={{
                 opacity: isDragging ? 0.4 : 1,
                 borderTop: isDropTarget ? "2px solid #DD4CAB" : "2px solid transparent",
@@ -196,14 +198,14 @@ export function PageContent({
                 onDragStart={(e) => handleDragStart(e, block.id)}
                 onDragEnd={handleDragEnd}
                 title="Drag to reorder"
-                className="cursor-grab text-[#888] text-base p-0.5 select-none shrink-0 leading-none transition-all duration-100"
+                className="cursor-grab text-[#888] text-base p-0.5 select-none shrink-0 leading-none transition-all duration-200 absolute -translate-x-6"
                 style={{
                   pointerEvents: draggedId && draggedId !== block.id ? "none" : "auto",
-                  display: hoveredId === block.id ? "block" : "none",
+                  opacity: hoveredId === block.id ? "100" : "0",
                 }}
               >
                 {/* TO-D0: replace me D: should be simialr to notion to where it only appears when you hover over the area*/}
-                D:
+                <img className="max-h-6" src={gripIcon}/>
               </span>
 
               {/* block content: editing or rendered */}
@@ -233,10 +235,10 @@ export function PageContent({
               {/* Delete button */}
               <button
                 onClick={() => onDeleteBlock(block.id)}
-                className="ml-1 text-[#DD4CAB] bg-transparent border-0 cursor-pointer shrink-0 text-sm px-1 py-0.5"
+                className="ml-1 text-[#DD4CAB] bg-transparent border-0 cursor-pointer text-sm px-1 py-0.5 opacity-0 group-hover:opacity-100 transition-all ease-in-out"
                 style={{ pointerEvents: draggedId ? "none" : "auto" }}
               >
-                ✕
+                <img className="w-4" src={removeIcon}/>
               </button>
             </div>
           );
@@ -250,7 +252,7 @@ export function PageContent({
           onDragLeave={() => setDragOverEnd(false)}
           onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; }}
           onDrop={handleDropAtEnd}
-          className="h-8 rounded transition-colors duration-100"
+          className="h-8 transition-colors duration-100"
           style={{
             borderTop: dragOverEnd ? "2px solid #DD4CAB" : "2px solid transparent",
           }}

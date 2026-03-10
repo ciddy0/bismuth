@@ -4,6 +4,7 @@ import { PageTree } from "./PageTree";
 import { SearchPanel } from "./SearchPanel";
 import type { Page } from "../../types/Page";
 import { PageWithChildren } from "../../services/pageService";
+import { addIcon } from "/add.png";
 
 interface SidebarProps {
   pages: PageWithChildren[];
@@ -66,7 +67,9 @@ export function Sidebar({
               }}
               className="w-full"
             />
-            <button onClick={handleCreatePage}>+</button>
+            <button onClick={handleCreatePage}>            
+              <img className="inline max-h-5" src={"/add.png"}/>
+            </button>
           </div>
 
           <PageTree

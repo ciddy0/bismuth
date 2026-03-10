@@ -1,7 +1,7 @@
 import type { Block } from "../../types/Block";
 import type { Page } from "../../types/Page";
 import linkIcon from "../../assets/link.png";
-import pageIcon from "../../assets/page.png";
+import pageIcon from "/page.png";
 
 /**
  * renders a block based on its block_type.
@@ -42,7 +42,7 @@ export function BlockRenderer({ block, onNavigate }: BlockRendererProps) {
         const subPageId = block.block_type.data.page_id;
         return (
           <div
-            className="p-3 bg-[#F09BDC20] text-white rounded-md cursor-pointer flex items-center gap-2 hover:underline"
+            className="p-3 bg-[#F09BDC20] text-white cursor-pointer flex items-center gap-2 hover:underline"
             onClick={async () => {
               try {
                 const { pageService } =
@@ -66,7 +66,7 @@ export function BlockRenderer({ block, onNavigate }: BlockRendererProps) {
         const pageLinkId = block.block_type.data.page_id;
         return (
           <div
-            className="p-2 bg-[#e8f4ff] rounded cursor-pointer border border-[#b3d9ff] inline-flex items-center gap-1"
+            className="p-2 bg-[#e8f4ff] cursor-pointer border border-[#b3d9ff] inline-flex items-center gap-1"
             onClick={async () => {
               try {
                 const { pageService } =
