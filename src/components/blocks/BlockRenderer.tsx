@@ -5,7 +5,7 @@ import pageIcon from "../../assets/page.png";
 
 /**
  * renders a block based on its block_type.
- * 
+ *
  * TODO: refactor switch into a map of renderers by block type
  * TODO: add inline editing per block
  * TODO: add hover states and keyboard navigation
@@ -42,17 +42,7 @@ export function BlockRenderer({ block, onNavigate }: BlockRendererProps) {
         const subPageId = block.block_type.data.page_id;
         return (
           <div
-            className="subpage-link"
-            style={{
-              padding: "12px",
-              background: "#F09BDC20",
-              color: "#ffffff",
-              borderRadius: "6px",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
+            className="p-3 bg-[#F09BDC20] text-white rounded-md cursor-pointer flex items-center gap-2 hover:underline"
             onClick={async () => {
               try {
                 const { pageService } =
@@ -64,11 +54,7 @@ export function BlockRenderer({ block, onNavigate }: BlockRendererProps) {
               }
             }}
           >
-            <img
-              src={pageIcon}
-              alt="Sub page"
-              style={{ width: 18, height: 18 }}
-            />
+            <img src={pageIcon} alt="Sub page" className="w-[18px] h-[18px]" />
             {block.content}
           </div>
         );
@@ -80,14 +66,7 @@ export function BlockRenderer({ block, onNavigate }: BlockRendererProps) {
         const pageLinkId = block.block_type.data.page_id;
         return (
           <div
-            style={{
-              padding: "8px",
-              background: "#e8f4ff",
-              borderRadius: "4px",
-              cursor: "pointer",
-              border: "1px solid #b3d9ff",
-              display: "inline-block",
-            }}
+            className="p-2 bg-[#e8f4ff] rounded cursor-pointer border border-[#b3d9ff] inline-flex items-center gap-1"
             onClick={async () => {
               try {
                 const { pageService } =
@@ -99,11 +78,7 @@ export function BlockRenderer({ block, onNavigate }: BlockRendererProps) {
               }
             }}
           >
-            <img
-              src={linkIcon}
-              alt="Page link"
-              style={{ width: 16, height: 16 }}
-            />
+            <img src={linkIcon} alt="Page link" className="w-4 h-4" />
             {block.content}
           </div>
         );

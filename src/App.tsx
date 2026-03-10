@@ -94,7 +94,7 @@ function App() {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
+    <div className="flex h-screen">
       <Sidebar
         pages={pages}
         currentPageId={currentPage?.id || null}
@@ -105,7 +105,7 @@ function App() {
         onCreateChild={handleCreateNestedPage}
       />
 
-      <div style={{ width: "100%" }}>
+      <div className="w-full">
         {currentPage ? (
           <>
             <PageHeader page={currentPage} onUpdate={() => loadPages()} />

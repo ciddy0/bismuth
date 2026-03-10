@@ -46,14 +46,14 @@ export function Sidebar({
   };
 
   return (
-    <div className="sidebar">
+    <div className="w-80 h-screen flex flex-col border-r border-[#444] p-4 shrink-0">
       <h2>Pages</h2>
 
       <SearchBar value={searchQuery} onChange={setSearchQuery} />
 
       {searchQuery === "" ? (
         <>
-          <div className="create-page-wrapper">
+          <div className="flex gap-[2%] mb-2">
             <input
               type="text"
               value={newPageTitle}
@@ -64,7 +64,7 @@ export function Sidebar({
                   handleCreatePage();
                 }
               }}
-              style={{ width: "100%" }}
+              className="w-full"
             />
             <button onClick={handleCreatePage}>+</button>
           </div>

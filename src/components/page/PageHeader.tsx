@@ -40,15 +40,9 @@ export function PageHeader({ page, onUpdate }: PageHeaderProps) {
 
   return (
     <div
-      className="page-cover"
+      className="group h-[200px] w-full p-4 bg-[#222] bg-cover bg-center"
       style={{
-        height: "200px",
-        width: "100%",
-        padding: "16px",
-        backgroundColor: "#222",
         backgroundImage: page.cover ? `url(${getAssetUrl(page.cover)})` : "none",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
       }}
       title={`${page.cover}`}
     >
@@ -56,7 +50,7 @@ export function PageHeader({ page, onUpdate }: PageHeaderProps) {
       <button
         onClick={() => handleImageUpload(page.id, "cover")}
         title="Upload Cover"
-        className="upload-cover-button"
+        className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
       >
         🖼️
       </button>

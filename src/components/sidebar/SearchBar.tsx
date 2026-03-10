@@ -1,6 +1,6 @@
 /**
  * search bar idk xd
- * 
+ *
  * TODO: add keyboard shortcut to focus search maybe
  * TODO: add clear (×) button when input is not empty maybe
  * TODO: highlight matching text in page titles (maybe this prob really hard)
@@ -19,7 +19,7 @@ export function SearchBar({ value, onChange, placeholder = "Search pages..." }: 
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      style={{ marginBottom: "8px", width: "80%"}}
+      className="mb-2 w-4/5"
     />
   );
 }

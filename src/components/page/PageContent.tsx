@@ -164,8 +164,8 @@ export function PageContent({
   };
 
   return (
-    <div style={{ flex: 1, padding: "16px 40px" }}>
-      <h1 style={{ textAlign: "left" }}>{page.title}</h1>
+    <div className="flex-1 px-10 py-4">
+      <h1>{page.title}</h1>
 
       {/* block list */}
       <div>
@@ -184,16 +184,10 @@ export function PageContent({
               onMouseEnter={() => setHoveredId(block.id)}
               onMouseLeave={() => setHoveredId(null)}
               onDrop={(e) => handleDrop(e, block.id)}
+              className="mb-1 rounded flex items-center gap-1.5 transition-all duration-100 cursor-default"
               style={{
-                marginBottom: "4px",
-                borderRadius: "4px",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
                 opacity: isDragging ? 0.4 : 1,
                 borderTop: isDropTarget ? "2px solid #DD4CAB" : "2px solid transparent",
-                transition: "all 0.1s",
-                cursor: "default",
               }}
             >
               {/* drag handle */}
@@ -202,17 +196,10 @@ export function PageContent({
                 onDragStart={(e) => handleDragStart(e, block.id)}
                 onDragEnd={handleDragEnd}
                 title="Drag to reorder"
+                className="cursor-grab text-[#888] text-base p-0.5 select-none shrink-0 leading-none transition-all duration-100"
                 style={{
-                  cursor: "grab",
-                  color: "#888",
-                  fontSize: "16px",
-                  padding: "2px",
-                  userSelect: "none",
-                  flexShrink: 0,
-                  lineHeight: 1,
                   pointerEvents: draggedId && draggedId !== block.id ? "none" : "auto",
                   display: hoveredId === block.id ? "block" : "none",
-                  transition: "all 0.1s",
                 }}
               >
                 {/* TO-D0: replace me D: should be simialr to notion to where it only appears when you hover over the area*/}
@@ -221,10 +208,8 @@ export function PageContent({
 
               {/* block content: editing or rendered */}
               <div
-                style={{ 
-                  flex: 1,
-                pointerEvents: draggedId ? "none" : "auto"
-              }}
+                className="flex-1"
+                style={{ pointerEvents: draggedId ? "none" : "auto" }}
                 onClick={() => {
                   if (canEdit && !isEditing) startEditing(block);
                 }}
@@ -237,20 +222,8 @@ export function PageContent({
                     onBlur={commitEdit}
                     onKeyDown={handleEditKeyDown}
                     rows={1}
-                    style={{
-                      width: "100%",
-                      fieldSizing: "content",
-                      resize: "none",
-                      background: "transparent",
-                      border: "none",
-                      outline: "1px solid #DD4CAB",
-                      borderRadius: "3px",
-                      padding: "2px 4px",
-                      font: "inherit",
-                      fontSize: "inherit",
-                      color: "inherit",
-                      boxSizing: "border-box",
-                    }}
+                    className="w-full resize-none bg-transparent border-0 outline outline-1 outline-[#DD4CAB] rounded-[3px] px-1 py-0.5 font-[inherit] text-[inherit] box-border"
+                    style={{ fieldSizing: "content" } as React.CSSProperties}
                   />
                 ) : (
                   <BlockRenderer block={block} onNavigate={onNavigate} />
@@ -260,17 +233,8 @@ export function PageContent({
               {/* Delete button */}
               <button
                 onClick={() => onDeleteBlock(block.id)}
-                style={{
-                  marginLeft: "4px",
-                  color: "#DD4CAB",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  flexShrink: 0,
-                  fontSize: "14px",
-                  padding: "2px 4px",
-                  pointerEvents: draggedId ? "none" : "auto",
-                }}
+                className="ml-1 text-[#DD4CAB] bg-transparent border-0 cursor-pointer shrink-0 text-sm px-1 py-0.5"
+                style={{ pointerEvents: draggedId ? "none" : "auto" }}
               >
                 ✕
               </button>
@@ -286,23 +250,15 @@ export function PageContent({
           onDragLeave={() => setDragOverEnd(false)}
           onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; }}
           onDrop={handleDropAtEnd}
+          className="h-8 rounded transition-colors duration-100"
           style={{
-            height: "32px",
-            borderRadius: "4px",
             borderTop: dragOverEnd ? "2px solid #DD4CAB" : "2px solid transparent",
-            transition: "border-color 0.1s",
           }}
         />
       )}
 
       {/* new block input */}
-      <div
-        style={{
-          marginTop: "12px",
-          display: "flex",
-          gap: "8px",
-        }}
-      >
+      <div className="mt-3 flex gap-2">
         <input
           type="text"
           value={newBlockContent}
@@ -311,9 +267,7 @@ export function PageContent({
             if (e.key === "Enter") handleCreateBlock();
           }}
           placeholder="Type something..."
-          style={{ background: "transparent",
-                padding: "0px",
-          }}
+          className="bg-transparent p-0 border-0 outline-none"
         />
         {/* <button onClick={handleCreateBlock}>Add Block</button> */}
       </div>
