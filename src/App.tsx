@@ -22,7 +22,7 @@ function App() {
     setExpandedPages,
   } = usePages();
 
-  const { blocks, loadBlocks, createBlock, deleteBlock, updateBlock, reorderBlocks } = useBlocks();
+  const { blocks, loadBlocks, createBlock, createBlockAfter, deleteBlock, updateBlock, reorderBlocks } = useBlocks();
 
   const { currentPage, setCurrentPage } = useCurrentPage((page) => {
     if (page) {
@@ -80,6 +80,15 @@ function App() {
     await createBlock(pageId, blockType, content);
   };
 
+  const handleCreateBlockAfter = async (
+    pageId: string,
+    blockType: BlockType,
+    content: string,
+    afterBlockId: string,
+  ) => {
+    return await createBlockAfter(pageId, blockType, content, afterBlockId);
+  };
+
   const handleDeleteBlock = async (blockId: string) => {
     await deleteBlock(blockId);
     await loadPages(); // Refresh pages in case a SubPage block was deleted
@@ -113,6 +122,7 @@ function App() {
               page={currentPage}
               blocks={blocks}
               onCreateBlock={handleCreateBlock}
+              onCreateBlockAfter={handleCreateBlockAfter}
               onDeleteBlock={handleDeleteBlock}
               onUpdateBlock={handleUpdateBlock}
               onReorderBlocks={handleReorderBlocks}

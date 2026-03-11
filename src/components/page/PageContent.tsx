@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { BlockRenderer } from "../blocks/BlockRenderer";
 import type { Block } from "../../types/Block";
 import type { Page } from "../../types/Page";
@@ -12,6 +12,7 @@ interface PageContentProps {
   page: Page;
   blocks: Block[];
   onCreateBlock: (pageId: string, blockType: BlockType, content: string) => Promise<void>;
+  onCreateBlockAfter: (pageId: string, blockType: BlockType, content: string, afterBlockId: string) => Promise<Block | null>;
   onDeleteBlock: (blockId: string) => Promise<void>;
   onUpdateBlock: (blockId: string, content: string) => Promise<void>;
   onReorderBlocks: (reorderedBlocks: Block[]) => Promise<void>;
@@ -22,6 +23,7 @@ export function PageContent({
   page,
   blocks,
   onCreateBlock,
+  onCreateBlockAfter,
   onDeleteBlock,
   onUpdateBlock,
   onReorderBlocks,
@@ -32,6 +34,30 @@ export function PageContent({
   // inline editing states
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingContent, setEditingContent] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const newBlockInputRef = useRef<HTMLInputElement>(null);
+  const [pendingCursorPos, setPendingCursorPos] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (pendingCursorPos !== null && textareaRef.current) {
+      textareaRef.current.setSelectionRange(pendingCursorPos, pendingCursorPos);
+      setPendingCursorPos(null);
+    }
+  }, [pendingCursorPos, editingId]);
+
+  const [pendingFocusBlockId, setPendingFocusBlockId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (pendingFocusBlockId) {
+      const block = blocks.find(b => b.id === pendingFocusBlockId);
+      if (block) {
+        setEditingId(block.id);
+        setEditingContent(block.content);
+        setPendingCursorPos(0);
+        setPendingFocusBlockId(null);
+      }
+    }
+  }, [blocks, pendingFocusBlockId]);
 
   // drag-and-drop states
   const [draggedId, setDraggedId] = useState<string | null>(null);
@@ -66,10 +92,64 @@ export function PageContent({
     setEditingId(null);
   };
 
-  const handleEditKeyDown = (e: React.KeyboardEvent) => {
+  const navigateToBlock = async (block: Block, cursorPos: number) => {
+    if (editingId !== null) {
+      const original = blocks.find((b) => b.id === editingId);
+      if (original && editingContent !== original.content) {
+        await onUpdateBlock(editingId, editingContent);
+      }
+    }
+    setEditingId(block.id);
+    setEditingContent(block.content);
+    setPendingCursorPos(cursorPos);
+  };
+
+  const handleEditKeyDown = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const { selectionStart, value } = e.currentTarget;
+
+    if (e.key === "ArrowUp") {
+      const isOnFirstLine = value.lastIndexOf('\n', selectionStart - 1) === -1;
+      if (isOnFirstLine) {
+        e.preventDefault();
+        const currentIndex = blocks.findIndex(b => b.id === editingId);
+        if (currentIndex > 0) {
+          const prevBlock = blocks[currentIndex - 1];
+          if (!NON_EDITABLE_TYPES.has(prevBlock.block_type.type)) {
+            navigateToBlock(prevBlock, prevBlock.content.length);
+          }
+        }
+      }
+    }
+
+    if (e.key === "ArrowDown") {
+      const isOnLastLine = value.indexOf('\n', selectionStart) === -1;
+      if (isOnLastLine) {
+        e.preventDefault();
+        const currentIndex = blocks.findIndex(b => b.id === editingId);
+        if (currentIndex < blocks.length - 1) {
+          const nextBlock = blocks[currentIndex + 1];
+          if (!NON_EDITABLE_TYPES.has(nextBlock.block_type.type)) {
+            navigateToBlock(nextBlock, 0);
+          }
+        } else {
+          await commitEdit();
+          newBlockInputRef.current?.focus();
+        }
+      }
+    }
+
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      commitEdit();
+      const contentBefore = editingContent.slice(0, selectionStart);
+      const contentAfter = editingContent.slice(selectionStart);
+      const currentBlockId = editingId!;
+      setEditingContent(contentBefore);
+      setEditingId(null);
+      await onUpdateBlock(currentBlockId, contentBefore);
+      const newBlock = await onCreateBlockAfter(page.id, { type: "Text" }, contentAfter, currentBlockId);
+      if (newBlock) {
+        setPendingFocusBlockId(newBlock.id);
+      }
     }
     if (e.key === "Escape") {
       setEditingId(null);
@@ -218,14 +298,16 @@ export function PageContent({
               >
                 {isEditing ? (
                   <textarea
+                    ref={textareaRef}
                     autoFocus
                     value={editingContent}
                     onChange={(e) => setEditingContent(e.target.value)}
                     onBlur={commitEdit}
                     onKeyDown={handleEditKeyDown}
                     rows={1}
-                    className="w-full resize-none bg-transparent border-0 outline outline-1 outline-[#DD4CAB] rounded-[3px] px-1 py-0.5 font-[inherit] text-[inherit] box-border"
-                    style={{ fieldSizing: "content" } as React.CSSProperties}
+                    placeholder="Press '/' for commands"
+                    className="w-full resize-none bg-transparent outline-none font-[inherit] text-[inherit] leading-[inherit] block min-h-[1em]"
+                    style={{ fieldSizing: "content", padding: 0 } as React.CSSProperties}
                   />
                 ) : (
                   <BlockRenderer block={block} onNavigate={onNavigate} />
@@ -262,13 +344,24 @@ export function PageContent({
       {/* new block input */}
       <div className="mt-3 flex gap-2">
         <input
+          ref={newBlockInputRef}
           type="text"
           value={newBlockContent}
           onChange={(e) => setNewBlockContent(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") handleCreateBlock();
+            if (e.key === "ArrowUp") {
+              e.preventDefault();
+              for (let i = blocks.length - 1; i >= 0; i--) {
+                const block = blocks[i];
+                if (!NON_EDITABLE_TYPES.has(block.block_type.type)) {
+                  navigateToBlock(block, block.content.length);
+                  break;
+                }
+              }
+            }
           }}
-          placeholder="Type something..."
+          placeholder="Press '/' for commands"
           className="bg-transparent p-0 border-0 outline-none"
         />
         {/* <button onClick={handleCreateBlock}>Add Block</button> */}

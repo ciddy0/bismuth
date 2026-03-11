@@ -68,6 +68,33 @@ export function useBlocks() {
     }
   }, []);
 
+  const createBlockAfter = useCallback(
+    async (
+      pageId: string,
+      blockType: BlockType,
+      content: string,
+      afterBlockId: string,
+    ) => {
+      try {
+        const newBlock = await blockService.createBlock(pageId, blockType, content, null);
+        const afterIndex = blocks.findIndex(b => b.id === afterBlockId);
+        const newOrdering = [...blocks];
+        newOrdering.splice(afterIndex + 1, 0, newBlock);
+        setBlocks(newOrdering);
+        await Promise.all(
+          newOrdering.slice(afterIndex + 1).map((block, i) =>
+            blockService.reorderBlock(block.id, afterIndex + 1 + i)
+          )
+        );
+        return newBlock;
+      } catch (error) {
+        console.error("Failed to create block after:", error);
+        return null;
+      }
+    },
+    [blocks],
+  );
+
   const reorderBlocks = useCallback(async (reorderedBlocks: Block[]) => {
     const previous = blocks;
     setBlocks(reorderedBlocks);
@@ -93,6 +120,7 @@ export function useBlocks() {
     blocks,
     loadBlocks,
     createBlock,
+    createBlockAfter,
     deleteBlock,
     updateBlock,
     reorderBlocks,

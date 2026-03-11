@@ -86,6 +86,6 @@ export function BlockRenderer({ block, onNavigate }: BlockRendererProps) {
       break;
     }
     default:
-      return <p>{block.content}</p>;
+      return <p className="min-h-[1em]">{block.content}</p>;
   }
 }
